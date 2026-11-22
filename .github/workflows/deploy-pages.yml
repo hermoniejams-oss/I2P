@@ -9,7 +9,10 @@ on:
       - '.github/workflows/deploy-pages.yml'
   workflow_dispatch:
 
+# The deploy-pages action uses the GitHub Actions API to find the
+# github-pages artifact uploaded earlier in this workflow.
 permissions:
+  actions: read
   contents: read
   pages: write
   id-token: write
@@ -42,6 +45,7 @@ jobs:
         with:
           name: github-pages
           path: www
+          retention-days: 1
 
       - name: Deploy website
         id: deployment
