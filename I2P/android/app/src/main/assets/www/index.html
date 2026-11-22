@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#102d3a">
+  <meta name="application-name" content="I2P">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="I2P">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="robots" content="index,follow">
+  <meta name="description" content="I2P — chuyển nhiều ảnh thành PDF, chỉnh trang, bộ lọc và chất lượng ngay trên thiết bị.">
+  <meta name="author" content="Long Bùi">
+  <title>I2P — Image to PDF</title>
+  <link rel="icon" type="image/svg+xml" href="./assets/i2p-logo.svg">
+  <link rel="icon" type="image/png" sizes="48x48" href="./assets/favicon-48.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="app-shell" id="appShell">
+    <header class="topbar">
+      <a class="brand" href="#top" aria-label="I2P Home">
+        <img src="./assets/i2p-logo.svg" width="42" height="42" alt="I2P logo">
+        <span class="brand-copy"><strong>I2P</strong><small>IMAGE TO PDF</small></span>
+      </a>
+      <div class="top-actions">
+        <button class="install-button" id="installApp" type="button" aria-label="Cài I2P trên thiết bị" title="Cài I2P trên thiết bị">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11m0 0 4-4m-4 4-4-4"/><path d="M5 15v3.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V15"/></svg>
+          <span data-i18n="installApp">Cài ứng dụng</span>
+        </button>
+        <span class="privacy-chip"><span class="status-dot"></span><span data-i18n="localOnly">Xử lý trên thiết bị</span></span>
+        <button class="icon-button" id="themeToggle" type="button" aria-label="Toggle dark mode" title="Dark mode">
+          <svg class="sun-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>
+          <svg class="moon-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.1A8.5 8.5 0 0 1 9.9 3.5 8.6 8.6 0 1 0 20.5 14.1Z"/></svg>
+        </button>
+        <button class="icon-button" id="settingsOpen" type="button" aria-label="Settings" title="Settings">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.8a3.2 3.2 0 1 0 0 6.4 3.2 3.2 0 0 0 0-6.4Z"/><path d="m19.4 13.5 1.1.8-1.4 2.4-1.3-.5a7.8 7.8 0 0 1-1.5.9l-.2 1.4h-2.8l-.3-1.4a7.8 7.8 0 0 1-1.6-.9l-1.3.5-1.4-2.4 1.1-.8a7.4 7.4 0 0 1 0-1.8l-1.1-.8L8.1 8.5l1.3.5a7.8 7.8 0 0 1 1.6-.9l.3-1.4h2.8l.2 1.4a7.8 7.8 0 0 1 1.5.9l1.3-.5 1.4 2.4-1.1.8a7.4 7.4 0 0 1 0 1.8Z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main id="top" class="main-content">
+      <section class="intro-row">
+        <div class="intro-copy">
+          <div class="eyebrow"><span class="eyebrow-mark"></span><span data-i18n="eyebrow">CÔNG CỤ DÀNH CHO SINH VIÊN</span></div>
+          <h1 data-i18n="headline">Gom ảnh thành <span class="accent-text">một file PDF.</span></h1>
+          <p data-i18n="subheadline">Sắp xếp trang, tối ưu ảnh chụp bài tập và xuất PDF trong vài bước.</p>
+        </div>
+        <div class="intro-meta">
+          <div class="stat-card"><span class="stat-number" id="imageCount">0</span><span class="stat-label" data-i18n="imagesAdded">Ảnh đã thêm</span></div>
+          <div class="stat-card"><span class="stat-number" id="totalSize">0 MB</span><span class="stat-label" data-i18n="totalSize">Dung lượng ảnh</span></div>
+        </div>
+      </section>
+
+      <div class="workspace-grid">
+        <section class="left-column">
+          <section class="panel source-panel">
+            <div class="panel-heading">
+              <div>
+                <span class="step-label">01 / <span data-i18n="sourceStep">NGUỒN ẢNH</span></span>
+                <h2 data-i18n="addPhotos">Thêm ảnh của bạn</h2>
+                <p class="panel-subtitle" data-i18n="addPhotosHint">Chọn nhiều ảnh cùng lúc. Bạn có thể đổi thứ tự trước khi xuất.</p>
+              </div>
+              <button class="text-button" id="clearAll" type="button" disabled data-i18n="clearAll">Xóa tất cả</button>
+            </div>
+
+            <label class="dropzone" id="dropzone" for="fileInput" tabindex="0">
+              <input id="fileInput" type="file" accept="image/jpeg,image/png,image/webp,image/bmp,image/gif,image/*" multiple>
+              <span class="upload-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5"/><path d="M5 14v4.2A1.8 1.8 0 0 0 6.8 20h10.4a1.8 1.8 0 0 0 1.8-1.8V14"/></svg></span>
+              <strong data-i18n="dropTitle">Kéo ảnh vào đây hoặc <span>chọn ảnh</span></strong>
+              <small data-i18n="dropHint">JPG, PNG, WebP · Có thể chọn nhiều ảnh</small>
+            </label>
+
+            <div class="list-heading">
+              <div><h3 data-i18n="pageOrder">Thứ tự trang</h3><span id="listHint" class="muted-caption" data-i18n="noPhotos">Chưa có ảnh nào được thêm</span></div>
+              <span class="mini-badge" id="pageBadge">0 trang</span>
+            </div>
+            <div class="image-list" id="imageList" aria-live="polite">
+              <div class="empty-list" id="emptyList">
+                <div class="empty-illustration"><span></span><span></span><span></span></div>
+                <strong data-i18n="emptyTitle">Danh sách đang trống</strong>
+                <p data-i18n="emptyHint">Ảnh bạn chọn sẽ xuất hiện tại đây.</p>
+              </div>
+            </div>
+            <div class="list-footer" id="listFooter" hidden>
+              <span data-i18n="orderHint">Thứ tự từ trên xuống sẽ là thứ tự trang trong PDF.</span>
+            </div>
+          </section>
+
+          <section class="panel output-panel">
+            <div class="panel-heading compact-heading">
+              <div>
+                <span class="step-label">03 / <span data-i18n="exportStep">XUẤT TỆP</span></span>
+                <h2 data-i18n="exportPdf">Tạo file PDF</h2>
+              </div>
+              <span class="pdf-chip">PDF</span>
+            </div>
+            <label class="field-label" for="fileName" data-i18n="outputName">Tên file</label>
+            <div class="filename-field"><input id="fileName" type="text" value="bai-tap" maxlength="80" autocomplete="off"><span>.pdf</span></div>
+            <div class="export-summary">
+              <div><span data-i18n="pages">Số trang</span><strong id="summaryPages">0</strong></div>
+              <div><span data-i18n="pageSize">Khổ giấy</span><strong id="summaryPaper">A4</strong></div>
+              <div><span data-i18n="imageQuality">Chất lượng</span><strong id="summaryQuality">Cao</strong></div>
+            </div>
+            <button class="primary-button" id="exportButton" type="button" disabled>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 4.5-4.5M12 15l-4.5-4.5"/><path d="M5 16.5v2A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5v-2"/></svg>
+              <span data-i18n="createPdf">Xuất PDF</span>
+              <span class="button-arrow">→</span>
+            </button>
+            <div class="export-progress" id="exportProgress" hidden>
+              <div class="progress-track"><span id="progressBar"></span></div>
+              <span id="progressText">Đang xử lý...</span>
+            </div>
+            <p class="privacy-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 6v5c0 4.6 2.9 8 7 10 4.1-2 7-5.4 7-10V6l-7-3Z"/><path d="m9 12 2 2 4-4"/></svg><span data-i18n="privacyNote">Ảnh được xử lý trên thiết bị, không tải lên máy chủ.</span></p>
+          </section>
+        </section>
+
+        <aside class="right-column">
+          <section class="panel preview-panel">
+            <div class="panel-heading preview-heading">
+              <div>
+                <span class="step-label">PREVIEW</span>
+                <h2 data-i18n="preview">Xem trước trang</h2>
+              </div>
+              <span class="preview-count" id="previewCounter">— / —</span>
+            </div>
+            <div class="paper-stage">
+              <div class="paper-frame">
+                <canvas id="previewCanvas" width="420" height="594" aria-label="PDF page preview"></canvas>
+                <div class="paper-placeholder" id="previewPlaceholder">
+                  <svg viewBox="0 0 64 64" aria-hidden="true"><rect x="13" y="7" width="38" height="50" rx="4"/><path d="M22 21h20M22 29h20M22 37h12"/><circle cx="39" cy="43" r="5"/></svg>
+                  <span data-i18n="previewHint">Bản xem trước sẽ hiển thị tại đây</span>
+                </div>
+              </div>
+            </div>
+            <div class="preview-caption"><span class="preview-dot"></span><span data-i18n="previewCaption">Mô phỏng bố cục trang PDF</span></div>
+          </section>
+
+          <section class="panel settings-panel">
+            <div class="panel-heading compact-heading">
+              <div>
+                <span class="step-label">02 / <span data-i18n="editStep">CHỈNH SỬA</span></span>
+                <h2 data-i18n="pageSettings">Thiết lập trang & ảnh</h2>
+              </div>
+              <button class="reset-button" id="resetSettings" type="button" data-i18n="reset">Đặt lại</button>
+            </div>
+
+            <div class="control-section">
+              <h3 data-i18n="paperLayout">Khổ giấy & bố cục</h3>
+              <div class="two-fields">
+                <label><span data-i18n="paperSize">Khổ giấy</span><select id="paperSize"><option value="A4">A4</option><option value="A5">A5</option><option value="A3">A3</option><option value="Letter">Letter</option><option value="Legal">Legal</option><option value="Custom" data-i18n="custom">Tùy chỉnh</option></select></label>
+                <label><span data-i18n="orientation">Hướng giấy</span><select id="orientation"><option value="portrait" data-i18n="portrait">Dọc</option><option value="landscape" data-i18n="landscape">Ngang</option></select></label>
+              </div>
+              <div class="custom-size" id="customSize" hidden>
+                <label><span data-i18n="widthMm">Rộng (mm)</span><input id="customWidth" type="number" min="50" max="500" value="210"></label>
+                <label><span data-i18n="heightMm">Cao (mm)</span><input id="customHeight" type="number" min="50" max="700" value="297"></label>
+              </div>
+              <div class="two-fields">
+                <label><span data-i18n="margin">Lề trang</span><select id="margin"><option value="0">0 mm</option><option value="5">5 mm</option><option value="10" selected>10 mm</option><option value="15">15 mm</option><option value="20">20 mm</option></select></label>
+                <label><span data-i18n="imageFit">Cách đặt ảnh</span><select id="fitMode"><option value="contain" data-i18n="fit">Vừa trang (giữ tỉ lệ)</option><option value="cover" data-i18n="fill">Lấp đầy (cắt viền)</option><option value="stretch" data-i18n="stretch">Kéo giãn</option></select></label>
+              </div>
+              <div class="slider-row"><div class="slider-head"><label for="imageScale" data-i18n="imageScale">Kích cỡ ảnh trong trang</label><output id="imageScaleValue">100%</output></div><input type="range" id="imageScale" min="50" max="120" value="100"></div>
+              <p class="field-help" data-i18n="fitHelp">“Vừa trang” giữ nguyên tỉ lệ và không cắt nội dung ảnh.</p>
+            </div>
+
+            <div class="control-section">
+              <h3 data-i18n="imageFilter">Bộ lọc ảnh</h3>
+              <label class="select-full"><span data-i18n="filter">Bộ lọc</span><select id="filter"><option value="original" data-i18n="original">Giữ nguyên màu</option><option value="grayscale" data-i18n="grayscale">Thang xám</option><option value="bw" data-i18n="bw">Trắng đen tài liệu</option><option value="sepia" data-i18n="sepia">Sepia</option></select></label>
+              <label class="toggle-row"><span><strong data-i18n="autoEnhance">Tự động cải thiện</strong><small data-i18n="autoEnhanceHint">Cân bằng vùng sáng/tối và độ tương phản</small></span><input id="autoEnhance" type="checkbox"><i></i></label>
+              <div class="slider-row"><div class="slider-head"><label for="brightness" data-i18n="brightness">Độ sáng</label><output id="brightnessValue">100%</output></div><input type="range" id="brightness" min="60" max="150" value="100"></div>
+              <div class="slider-row"><div class="slider-head"><label for="contrast" data-i18n="contrast">Tương phản</label><output id="contrastValue">100%</output></div><input type="range" id="contrast" min="60" max="160" value="100"></div>
+              <div class="slider-row"><div class="slider-head"><label for="sharpness" data-i18n="sharpness">Làm nét</label><output id="sharpnessValue">0</output></div><input type="range" id="sharpness" min="0" max="2" step="0.25" value="0"></div>
+              <p class="field-help" data-i18n="enhanceHelp">Cải thiện ảnh chỉ có tác dụng với ảnh đủ dữ liệu; không thể khôi phục chi tiết đã mất do out nét.</p>
+            </div>
+
+            <div class="control-section last-control-section">
+              <h3 data-i18n="outputQuality">Chất lượng đầu ra</h3>
+              <div class="slider-row"><div class="slider-head"><label for="quality" data-i18n="jpegQuality">Nén ảnh trong PDF</label><output id="qualityValue">85%</output></div><input type="range" id="quality" min="55" max="95" step="5" value="85"></div>
+              <div class="two-fields">
+                <label><span data-i18n="resolution">Độ phân giải</span><select id="dpi"><option value="96" data-i18n="smallFile">96 DPI · Nhẹ</option><option value="150">150 DPI · Cân bằng</option><option value="200" selected>200 DPI · Rõ</option><option value="300">300 DPI · In ấn</option></select></label>
+                <label><span data-i18n="colorMode">Chế độ màu</span><select id="colorMode"><option value="color" data-i18n="color">Màu</option><option value="gray" data-i18n="gray">Xám</option></select></label>
+              </div>
+              <p class="field-help" data-i18n="qualityHelp">300 DPI và chất lượng nén cao tạo file lớn hơn. Với bài tập thông thường, 150–200 DPI thường đủ dùng.</p>
+            </div>
+          </section>
+        </aside>
+      </div>
+    </main>
+
+    <footer class="app-footer">
+      <div class="footer-brand"><img src="./assets/i2p-logo.svg" alt="" width="26" height="26"><span><strong>I2P</strong> <span data-i18n="footerTag">Image to PDF</span></span></div>
+      <div class="footer-meta"><span>© 2026 I2P</span><span class="footer-separator">·</span><span data-i18n="developedBy">Developed by Long Bùi</span><span class="footer-separator">·</span><span data-i18n="allRights">Bản quyền thuộc về tác giả</span><span class="footer-separator">·</span><a class="policy-link" href="./privacy.html" data-i18n="privacyPolicy">Quyền riêng tư</a></div>
+    </footer>
+  </div>
+
+  <dialog class="settings-dialog" id="settingsDialog">
+    <form method="dialog" class="dialog-card">
+      <div class="dialog-heading"><div><span class="step-label" data-i18n="preferences">PREFERENCES</span><h2 data-i18n="appSettings">Cài đặt ứng dụng</h2></div><button class="icon-button close-dialog" value="cancel" aria-label="Close">×</button></div>
+      <div class="dialog-field"><div><strong data-i18n="language">Ngôn ngữ</strong><small data-i18n="languageHint">Chọn ngôn ngữ hiển thị</small></div><select id="language"><option value="vi">Tiếng Việt</option><option value="en">English</option></select></div>
+      <div class="dialog-field"><div><strong data-i18n="appearance">Giao diện</strong><small data-i18n="appearanceHint">Tự chọn sáng hoặc tối</small></div><select id="themeSelect"><option value="light" data-i18n="light">Sáng</option><option value="dark" data-i18n="dark">Tối</option><option value="system" data-i18n="system">Theo thiết bị</option></select></div>
+      <div class="about-box"><div class="about-logo"><img src="./assets/i2p-logo.svg" alt="I2P"></div><div><strong>I2P — Image to PDF</strong><p data-i18n="aboutText">Công cụ chuyển ảnh sang PDF chạy ngoại tuyến, ưu tiên quyền riêng tư.</p><small>Version 1.0.1 · Developed by Long Bùi</small></div></div>
+      <p class="copyright-note">© 2026 Long Bùi. <span data-i18n="copyright">Bản quyền và quyền tác giả được bảo lưu.</span></p>
+      <button class="primary-button dialog-done" value="done" data-i18n="done">Hoàn tất</button>
+    </form>
+  </dialog>
+
+  <div class="toast-region" id="toastRegion" aria-live="polite" aria-atomic="true"></div>
+  <script src="./app.js" defer></script>
+</body>
+</html>
